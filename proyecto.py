@@ -43,6 +43,7 @@ def menu():
 	'''Función principal, se encarga de leer la opcion solicitada y llamar las funciones requeridas
 	(None) -> (None)'''
 	flag = 0
+
 	while flag != 1:
 		print('MENÚ PRINCIPAL\n')
 		print('1. Cantidad de hombres menores de edad contagiados en el pais')
@@ -82,7 +83,7 @@ def menu():
 #
 def h_menores():
 	'''Esta función se encarga de filtrar los registros que contengan hombres menores a 18 años (menores de edad) y los exporta a un archivo .txt 
-	(list) -> (list)'''
+	'''
 	ruta = input('Ingrese ruta de archivo a usar: ')
 	flag = 1
 	r_menores = 'h_menores.txt'
@@ -107,9 +108,8 @@ def h_menores():
 	print('Salida enviada a ','h_menores.txt')
 #
 def h_contagiados():
-	print('Hombres contagiados')
-	'''Esta función se encarga de filtrar los registros que contengan hombres menores a 18 años (menores de edad) y los exporta a un archivo .txt 
-	(list) -> (list)'''
+	'''Esta función se encarga de filtrar los registros que contengan hombres contagiados que se hayan recuperado satisfactoiamentey los exporta a un archivo .txt 
+	'''
 	ruta = input('Ingrese ruta de archivo a usar: ')
 	flag = 1
 	hombres_recuperados = 'h_recuperados.txt'
@@ -134,7 +134,35 @@ def h_contagiados():
 	print('Salida enviada a ',hombres_recuperados)
 #
 def contagiados_ext():
-	print('Contagiados')
+	'''Esta función se encarga de filtrar los registros que contengan el país de origen ingresado al archivo "nombre_pais.txt"
+	'''
+	ruta = input('Ingrese ruta de archivo a usar: ')
+	flag = 1
+	while flag == 1:
+		if not ruta:
+			print('No ingresaste nada, intenta de nuevo')
+			ruta = input('Ingrese ruta de archivo a usar: ')
+		else:
+			flag = 0
+	with open(ruta,'r',encoding='UTF-8') as BBDD:
+		lectura = csv.reader(BBDD)
+		next(lectura)
+		input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
+		r_contagiados_ext = input_pais.lower() + ' .txt'
+		with open(r_contagiados_ext,'w',encoding='UTF-8') as archivo_contagiados_ext:
+			for linea in lectura:
+				linea_país = linea[14]
+				if linea_país == input_pais:
+					nueva_linea = csv.writer(archivo_contagiados_ext, delimiter='\t')
+					nueva_linea.writerow(linea)
+
+				elif not linea_país:
+					print('No ingresaste nada!, Intenta nuevamente')
+					input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
+					
+				else:
+					continue
+	print('Salida enviada a ',r_contagiados_ext)
 #
 def virus_a_colombia():
 	print('Países de donde proviene el virus: ')
