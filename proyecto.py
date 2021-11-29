@@ -44,7 +44,6 @@ def menu():
 	(None) -> (None)'''
 	flag = 0
 	while flag != 1:
-		#Esto es el menú pai. ya sabes cómo funciona, mientras flag sea diferente de una 1 corre esto, de lo cotnrario sale y dice 'hasta promto'
 		print('MENÚ PRINCIPAL\n')
 		print('1. Cantidad de hombres menores de edad contagiados en el pais')
 		print('2. Cantidad de hombres contagiados que se han recuperado a la fecha')
@@ -53,7 +52,6 @@ def menu():
 		print('5. Salir\n')
 
 		opc = int(input('Ingrese la opc deseada: '))
-
 		if opc == 1:
 			h_menores()
 			esperar()
@@ -78,7 +76,6 @@ def menu():
 
 		else:
 			print('Opción inválida!')
-	#Aquí se cumple cuando wl while no se cumple, osea flag = 1, por tanto, sale el programa
 	print('Hasta pronto')
 	time.sleep(1)
 	exit()		
@@ -97,11 +94,9 @@ def h_menores():
 			flag = 0
 	with open(ruta,'r',encoding='UTF-8') as BBDD:
 		lectura = csv.reader(BBDD)
-		#Next se usa para saltar un valor, algo que no necesitamos, por eso lo implementé aquí
 		next(lectura)
 		with open(r_menores,'w',encoding='UTF-8') as archivo_menores:
 			for linea in lectura:
-				#Filtro por edad
 				linea_edad = int(linea[7])
 				sexo = linea[9]
 				if linea_edad < 18 and sexo =='M':
@@ -126,11 +121,9 @@ def h_contagiados():
 			flag = 0
 	with open(ruta,'r',encoding='UTF-8') as BBDD:
 		lectura = csv.reader(BBDD)
-		#Next se usa para saltar un valor, algo que no necesitamos, por eso lo implementé aquí
 		next(lectura)
 		with open(hombres_recuperados,'w',encoding='UTF-8') as archivo_recuperados:
 			for linea in lectura:
-				#Filtro por edad
 				estado = linea[15]
 				sexo = linea[9]
 				if estado == 'Recuperado' and sexo == 'M':
@@ -141,32 +134,7 @@ def h_contagiados():
 	print('Salida enviada a ',hombres_recuperados)
 #
 def contagiados_ext():
-	print('Hombres contagiados fuera del pais')
-	'''Esta función se encarga de filtrar los registros que contengan hombres menores a 18 años (menores de edad) y los exporta a un archivo .txt 
-	(list) -> (list)'''
-	ruta = input('Ingrese ruta de archivo a usar: ')
-	flag = 1
-	contagios_externos = 'h_menores.txt'
-	while flag == 1:
-		if not ruta:
-			print('No ingresaste nada, intenta de nuevo')
-			ruta = input('Ingrese ruta de archivo a usar: ')
-		else:
-			flag = 0
-	with open(ruta,'r',encoding='UTF-8') as BBDD:
-		lectura = csv.reader(BBDD)
-		#Next se usa para saltar un valor, algo que no necesitamos, por eso lo implementé aquí
-		next(lectura)
-		with open(contagios_externos,'w',encoding='UTF-8') as archivo_contagio_ext:
-			for linea in lectura:
-				#Filtro por edad
-				num = 0
-				origen = linea[14]
-				origen_sig = next(linea)
-				while origen != origen_sig:
-					print(num,'.',' ',origen)
-			num = int(input('Seleccione un número para exportar casos por dicho país: '))
-	#print('Salida enviada a ','h_menores.txt')
+	print('Contagiados')
 #
 def virus_a_colombia():
 	print('Países de donde proviene el virus: ')
