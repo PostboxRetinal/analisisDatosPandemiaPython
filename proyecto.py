@@ -211,7 +211,8 @@ def contagiados_ext():
 						nueva_linea.writerow(info)
 					else:
 						continue
-				print('Salida exportada a: ',r_contagiados_ext)
+			print('Salida exportada a: ',r_contagiados_ext)
+			break
 				
 #
 def esperar():
