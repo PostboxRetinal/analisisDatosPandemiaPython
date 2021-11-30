@@ -1,5 +1,5 @@
-#Proyecto 3er corte
-# Creado por Santiago Sánchez y Sebastián Balanta
+#Algoritmo de manejo y consulta de datos COVID-19
+# Ideado y desarrollado por Sebastián Balanta
 import time
 import subprocess
 import csv
@@ -8,49 +8,22 @@ import os
 def main():
 	'''Función principal, se encarga de leer y escribir datos 
 	(none) -> (none)'''
-	print("Algoritmo de Búsqueda y consulta pacientes COVID-19 Balamon's \n")
+	print("Algoritmo de Búsqueda y consulta pacientes COVID-19 \n")
 	time.sleep(1)
 	try:
 		menu()
 	except KeyboardInterrupt:
-		salida = input('**¿Desea salir del programa? S/N **').lower()
+		salida = input('\n*¿Desea salir del programa? S/N: * ').lower()
 		if salida == 'n':
 			print('\n Ok, no ha pasado nada ;) \n')
+			time.sleep(2)
+			menu()
 		else:
 			exit()
-		
-#--------------------------------------------
-def separar(lista):
-	if len(lista) < 2:
-		return lista
-
-	else:
-		long_mitad = len(lista) // 2
-		long_der = separar(lista[:long_mitad])
-		long_izq = separar(lista[long_mitad:])
-		return mezclar(long_der,long_izq)
-#	
-def mezclar(long_derecha, long_izquierda):
-	x = 0
-	y = 0
-	final = []
-
-	while(x < len(long_derecha) and y < len(long_izquierda)):
-		if (long_derecha[x] < long_izquierda[y]):
-			final.append(long_derecha[x])
-			x += 1
-		else:
-			final.append(long_izquierda[y])
-			y += 1
-
-	final += long_derecha[x:]
-	final += long_izquierda[y:]
- 
-	return final
-#--------------------------------------------
+#
 def menu():
-	'''Función principal, se encarga de leer la opcion solicitada y llamar las funciones requeridas
-	(None) -> (None)'''
+	'''Menú, se encarga de llamar la función solicitada, llamada previamente por main
+	(none) -> (none)'''
 	flag = 0
 	while flag != 1:
 
@@ -58,14 +31,13 @@ def menu():
 		print('1. Cantidad de hombres menores de edad contagiados en el pais')
 		print('2. Cantidad de hombres contagiados que se han recuperado a la fecha')
 		print('3. Contagiados que proceden de un pais especifico')
-		print('4. Países de donde ha llegado el virus a Colombia')
-		print('5. Salir\n')
+		print('4. Salir\n')
 
 		opc = input('Ingrese la opc deseada: ')
 
 		while opc.isdigit() == False:
 			
-			print('Ingrese sólo caracéteres de tipo entero, intente nuevamente')
+			print('Ingrese sólo caractéres de tipo entero, intente nuevamente')
 			opc = input('Ingrese la opc deseada: ')
 
 		else:
@@ -86,11 +58,6 @@ def menu():
 				limpiar()
 
 			elif opc == 4:
-				virus_a_colombia()
-				esperar()
-				limpiar()
-
-			elif opc == 5:
 				flag = 1
 				limpiar()
 
@@ -99,11 +66,12 @@ def menu():
 				print('Opción inválida!')
 				esperar()
 	print('Hasta pronto')
-	time.sleep(1)
+	time.sleep(0.5)
 	exit()		
 #
 def h_menores():
-	'''Esta función se encarga de filtrar los registros que contengan hombres menores a 18 años (menores de edad) y los exporta a un archivo .txt 
+	'''Esta función se encarga de filtrar los registros que contengan hombres menores a 18 años (menores de edad) y los exporta a un archivo .txt
+	(none) -> (none) 
 	'''
 	flag = 1
 	r_menores = 'h_menores.txt'
@@ -141,7 +109,8 @@ def h_menores():
 		print('¡Este archivo no existe!')
 #
 def h_contagiados():
-	'''Esta función se encarga de filtrar los registros que contengan hombres menores a 18 años (menores de edad) y los exporta a un archivo .txt 
+	'''Esta función se encarga de filtrar los registros que contengan hombres recueperados de COVID-19 y los exporta a un archivo .txt
+	(none) -> (none) 
 	'''
 	flag = 1
 	r_recuperados = 'h_recuperados.txt'
@@ -173,7 +142,7 @@ def h_contagiados():
 					else:
 						continue
 			limpiar()
-			print('Salida enviada a ',r_recuperados)
+			print('Salida enviada a',r_recuperados)
 	except FileNotFoundError:
 		print('¡Este archivo no existe!')
 #
@@ -181,56 +150,69 @@ def contagiados_ext():
 	'''Esta función se encarga de filtrar los registros que contengan casos provenientes de otro país y los exporta a un archivo "nombre_pais.txt"
 	(none) -> (none)
 	'''
+	paises = []
 	flag = 1
 	num = 1
 	ruta = input('Ingrese ruta de archivo a usar: ')
-	while flag == 1:
+	while flag != 0:
 		if not os.path.exists(ruta):
 			print('Ruta o nombre de archivo inválido, revise nuevamente')
 			ruta = input('Ingrese ruta de archivo a usar: ')
 		else:
 			flag = 0
 
-	while flag == 0:
+	while flag != 1:
 		if not ruta:
-			print('No ingresaste nada, intenta de nuevo')
+			print('No ingresaste nada, intenta nuevamente')
 			ruta = input('Ingrese ruta de archivo a usar: ')
 		else:
 			flag = 1
+		with open(ruta,'r',encoding='UTF-8') as BBDD:
+			lectura = csv.reader(BBDD)
+			next(lectura)
+			#Filtro para listar países disponibles
+			for linea in lectura:	
+				if linea[14] not in paises:
+					paises.append(linea[14])
+				else:
+					continue
+			#Ciclo para listar los países del arreglo
+			for pais in paises:
+				if pais == "":
+					continue
+				else:
+					print(num,pais)
+					num += 1
+			print()
 
-	with open(ruta,'r',encoding='UTF-8') as BBDD:
-		lectura = csv.reader(BBDD)
-		next(lectura)
-		for linea in lectura:	
-			print(num,'.',linea[14])
-			num += 1
-		print()
-		input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
-		r_contagiados_ext = input_pais.lower() + ' .txt'
+			#Filtro de país
+			input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
 
-		try:
+			while flag != 0:
+				if not input_pais:
+					print('No ingresaste nada!, Intenta nuevamente')
+					input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
+				elif input_pais not in paises:
+					print('País no encontrado, intenta con otro nombre o escribirlo correctamente')
+					input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
+				else:
+					flag = 0
+
+			r_contagiados_ext = input_pais.lower() + '.txt'
+			r_contagiados_ext = r_contagiados_ext.strip(' ')
+		with open(ruta,'r',encoding='UTF-8') as BBDD:
+			lectura2 = csv.reader(BBDD)
+			next(lectura2)
 			with open(r_contagiados_ext,'w',encoding='UTF-8') as archivo_contagiados_ext:
-				for linea in lectura:
-					linea_pais = linea[14]
-					if linea_pais == input_pais:
+				for info in lectura2:
+					linea_pais = info[14]
+					if input_pais == linea_pais:
 						nueva_linea = csv.writer(archivo_contagiados_ext, delimiter='\t')
-						nueva_linea.writerow(linea)
-
-					elif not linea_pais:
-						print('No ingresaste nada!, Intenta nuevamente')
-						input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
-						
+						nueva_linea.writerow(info)
 					else:
-						print('País no encontrado, intenta con otro nombre o escribirlo correctamente')
-						input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
-				limpiar()
-				print('Salida enviada a ',r_contagiados_ext)
-		except FileNotFoundError:
-			print('¡Este archivo no existe!')
-	
-#
-def virus_a_colombia():
-	print('Países de donde proviene el virus: ')
+						continue
+				print('Salida exportada a: ',r_contagiados_ext)
+				
 #
 def esperar():
 	'''Esta función se encarga de esperar una interacción del usuario
