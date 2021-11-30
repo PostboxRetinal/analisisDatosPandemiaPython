@@ -10,7 +10,15 @@ def main():
 	(none) -> (none)'''
 	print("Algoritmo de Búsqueda y consulta pacientes COVID-19 Balamon's \n")
 	time.sleep(1)
-	menu()
+	try:
+		menu()
+	except KeyboardInterrupt:
+		salida = input('**¿Desea salir del programa? S/N **').lower()
+		if salida == 'n':
+			print('\n Ok, no ha pasado nada ;) \n')
+		else:
+			exit()
+		
 #--------------------------------------------
 def separar(lista):
 	if len(lista) < 2:
@@ -133,62 +141,93 @@ def h_menores():
 		print('¡Este archivo no existe!')
 #
 def h_contagiados():
-	'''Esta función se encarga de filtrar los registros que contengan hombres contagiados que se hayan recuperado satisfactoiamentey los exporta a un archivo .txt 
+	'''Esta función se encarga de filtrar los registros que contengan hombres menores a 18 años (menores de edad) y los exporta a un archivo .txt 
 	'''
-	ruta = input('Ingrese ruta de archivo a usar: ')
 	flag = 1
-	hombres_recuperados = 'h_recuperados.txt'
+	r_recuperados = 'h_recuperados.txt'
+	ruta = input('Ingrese ruta de archivo a usar: ')
 	while flag == 1:
+		if not os.path.exists(ruta):
+			print('Ruta o nombre de archivo inválido, revise nuevamente')
+			ruta = input('Ingrese ruta de archivo a usar: ')
+		else:
+			flag = 0
+
+	while flag == 0:
 		if not ruta:
 			print('No ingresaste nada, intenta de nuevo')
 			ruta = input('Ingrese ruta de archivo a usar: ')
 		else:
-			flag = 0
-	with open(ruta,'r',encoding='UTF-8') as BBDD:
-		lectura = csv.reader(BBDD)
-		next(lectura)
-		with open(hombres_recuperados,'w',encoding='UTF-8') as archivo_recuperados:
-			for linea in lectura:
-				estado = linea[15]
-				sexo = linea[9]
-				if estado == 'Recuperado' and sexo == 'M':
-					nueva_linea = csv.writer(archivo_recuperados, delimiter='\t')
-					nueva_linea.writerow(linea)
-				else:
-					continue
-	print('Salida enviada a ',hombres_recuperados)
+			flag = 1
+	try:
+		with open(ruta,'r',encoding='UTF-8') as BBDD:
+			lectura = csv.reader(BBDD)
+			next(lectura)
+			with open(r_recuperados,'w',encoding='UTF-8') as archivo_recuperados:
+				for linea in lectura:
+					estado = linea[15]
+					sexo = linea[9]
+					if estado == 'Recuperado' and sexo == 'M':
+						nueva_linea = csv.writer(archivo_recuperados, delimiter='\t')
+						nueva_linea.writerow(linea)
+					else:
+						continue
+			limpiar()
+			print('Salida enviada a ',r_recuperados)
+	except FileNotFoundError:
+		print('¡Este archivo no existe!')
 #
 def contagiados_ext():
-	'''Esta función se encarga de filtrar los registros que contengan el país de origen ingresado al archivo "nombre_pais.txt"
+	'''Esta función se encarga de filtrar los registros que contengan casos provenientes de otro país y los exporta a un archivo "nombre_pais.txt"
+	(none) -> (none)
 	'''
-	ruta = input('Ingrese ruta de archivo a usar: ')
 	flag = 1
+	num = 1
+	ruta = input('Ingrese ruta de archivo a usar: ')
 	while flag == 1:
+		if not os.path.exists(ruta):
+			print('Ruta o nombre de archivo inválido, revise nuevamente')
+			ruta = input('Ingrese ruta de archivo a usar: ')
+		else:
+			flag = 0
+
+	while flag == 0:
 		if not ruta:
 			print('No ingresaste nada, intenta de nuevo')
 			ruta = input('Ingrese ruta de archivo a usar: ')
 		else:
-			flag = 0
+			flag = 1
+
 	with open(ruta,'r',encoding='UTF-8') as BBDD:
 		lectura = csv.reader(BBDD)
 		next(lectura)
+		for linea in lectura:	
+			print(num,'.',linea[14])
+			num += 1
+		print()
 		input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
 		r_contagiados_ext = input_pais.lower() + ' .txt'
-		with open(r_contagiados_ext,'w',encoding='UTF-8') as archivo_contagiados_ext:
-			for linea in lectura:
-				linea_pais = linea[14]
-				if linea_pais == input_pais:
-					nueva_linea = csv.writer(archivo_contagiados_ext, delimiter='\t')
-					nueva_linea.writerow(linea)
 
-				elif not linea_pais:
-					print('No ingresaste nada!, Intenta nuevamente')
-					input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
-					
-				else:
-					print('País no encontrado, intenta con otro nombre o escribirlo correctamente')
-					break
-	print('Salida enviada a ',r_contagiados_ext)
+		try:
+			with open(r_contagiados_ext,'w',encoding='UTF-8') as archivo_contagiados_ext:
+				for linea in lectura:
+					linea_pais = linea[14]
+					if linea_pais == input_pais:
+						nueva_linea = csv.writer(archivo_contagiados_ext, delimiter='\t')
+						nueva_linea.writerow(linea)
+
+					elif not linea_pais:
+						print('No ingresaste nada!, Intenta nuevamente')
+						input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
+						
+					else:
+						print('País no encontrado, intenta con otro nombre o escribirlo correctamente')
+						input_pais = input('Digite nombre del país que desea filtrar por: ').upper()
+				limpiar()
+				print('Salida enviada a ',r_contagiados_ext)
+		except FileNotFoundError:
+			print('¡Este archivo no existe!')
+	
 #
 def virus_a_colombia():
 	print('Países de donde proviene el virus: ')
