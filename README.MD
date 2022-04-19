@@ -1,6 +1,6 @@
 # AYPR_P3
+FINALIZADO
 Trabajo de Proyecto de 3er corte
-Realizado por Sebastián Balanta.
 
 La pandemia además de representar una situación de calamidad a nivel mundial, desde el punto de vista técnico genera grandes cantidades de información. Un ejemplo de ello es el registro de la evolución de la enfermedad en nuestro país que se puede apreciar en el sitio web https://www.ins.gov.co/Noticias/Paginas/Coronavirus.aspx.
 
